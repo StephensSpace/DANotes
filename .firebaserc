@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "danotes-testproject": {
+      "hosting": {
+        "danotes": [
+          "danotes-testproject"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "danotes-testproject"
+  }
+}

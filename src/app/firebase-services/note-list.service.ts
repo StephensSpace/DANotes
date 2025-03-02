@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, doc, collectionData, onSnapshot } from '@angular/fire/firestore';
+import { Firestore, collection, doc, collectionData, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Note } from '../interfaces/note.interface';
 
@@ -29,7 +29,10 @@ export class NoteListService {
   }
 
   subTrashList() {
-    return onSnapshot(this.getTrashRef(), (list) => {
+    
+    return onSnapshot(this.getTrashRef(),
+      (list) => {
+      this.trashNotes= [];
       list.forEach(element => {
         this.trashNotes.push(this.setNoteObject(element.data(), element.id))
       });
@@ -38,11 +41,12 @@ export class NoteListService {
 
   subNotesList() {
     return onSnapshot(this.getNotesRef(),
-    (list) => {
-      list.forEach(element => {
-        this.normalNotes.push(this.setNoteObject(element.data(), element.id))
+      (list) => {
+        this.normalNotes= [];
+        list.forEach(element => {
+          this.normalNotes.push(this.setNoteObject(element.data(), element.id))
+        });
       });
-    });
   }
 
   setNoteObject(obj: any, id: string): Note {
@@ -55,6 +59,19 @@ export class NoteListService {
     }
   }
 
+  async updateNote(docID: string, colID: string, item: {}) {
+    await updateDoc(this.getSingleDoc(colID, docID), item).catch(
+      (err) => { console.error(err)}
+    )
+  }
+
+  async addNote(item: Note) {
+    await addDoc(this.getNotesRef(), item).catch(
+      (err) => { console.error(err) }
+    ).then((docRef) => {
+      console.log("Document written with ID:", docRef?.id);
+    })
+  }
 
   getTrashRef() {
     return collection(this.firestore, 'trash');
@@ -64,7 +81,7 @@ export class NoteListService {
     return collection(this.firestore, 'Notes');
   }
 
-  getSingleTrashDoc(colID: string, docId: string) {
+  getSingleDoc(colID: string, docId: string) {
     return doc(collection(this.firestore, colID), docId)
   }
 

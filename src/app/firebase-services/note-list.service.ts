@@ -29,20 +29,20 @@ export class NoteListService {
   }
 
   subTrashList() {
-    
+
     return onSnapshot(this.getTrashRef(),
       (list) => {
-      this.trashNotes= [];
-      list.forEach(element => {
-        this.trashNotes.push(this.setNoteObject(element.data(), element.id))
-      });
-    })
+        this.trashNotes = [];
+        list.forEach(element => {
+          this.trashNotes.push(this.setNoteObject(element.data(), element.id))
+        });
+      })
   }
 
   subNotesList() {
     return onSnapshot(this.getNotesRef(),
       (list) => {
-        this.normalNotes= [];
+        this.normalNotes = [];
         list.forEach(element => {
           this.normalNotes.push(this.setNoteObject(element.data(), element.id))
         });
@@ -59,10 +59,30 @@ export class NoteListService {
     }
   }
 
-  async updateNote(docID: string, colID: string, item: {}) {
-    await updateDoc(this.getSingleDoc(colID, docID), item).catch(
-      (err) => { console.error(err)}
-    )
+  async updateNote(note: Note) {
+    if (note.id) {
+      let colRef = this.getSingleDoc(this.getCallIdFromNote(note), note.id)
+      await updateDoc(colRef, this.getCleanJSON(note)).catch(
+        (err) => { console.error(err) }
+      )
+    }
+  }
+
+  getCleanJSON(note: Note) {
+    return {
+      type: note.type,
+      title: note.title,
+      content: note.content,
+      marked: note.marked,
+    }
+  }
+
+  getCallIdFromNote(note: Note) {
+    if (note.type == 'note') {
+      return 'Notes'
+    } else {
+      return 'trash'
+    }
   }
 
   async addNote(item: Note) {

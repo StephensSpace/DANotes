@@ -132,6 +132,8 @@
             </button>
         </div>
     </div>
+
+    
     <div *ngIf="status == 'notes'">
         <app-note *ngFor="let note of getList()" [note]="note"></app-note>
     </div>

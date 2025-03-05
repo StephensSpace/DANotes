@@ -13,14 +13,17 @@ export class NoteListService {
   //unsubSingle
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
+  normalMarkedNotes: Note[] = [];
 
   firestore: Firestore = inject(Firestore);
   unsubNotes;
   unsubTrash;
+  unsubMarkedNotes;
 
   constructor() {
     this.unsubNotes = this.subNotesList();
-    this.unsubTrash = this.subTrashList()
+    this.unsubMarkedNotes = this.subMarkedNotesList();
+    this.unsubTrash = this.subTrashList();
   }
 
   ngonDestroy() {
@@ -46,12 +49,23 @@ export class NoteListService {
   }
 
   subNotesList() {
-    const q = query(this.getNotesRef(), where("state", "==", "CA"))
+    const q = query(this.getNotesRef(), limit(20))
     return onSnapshot(q,
       (list) => {
         this.normalNotes = [];
         list.forEach(element => {
           this.normalNotes.push(this.setNoteObject(element.data(), element.id))
+        });
+      });
+  }
+
+  subMarkedNotesList() {
+    const q = query(this.getNotesRef(), limit(20), where("marked", "==", true))
+    return onSnapshot(q,
+      (list) => {
+        this.normalMarkedNotes = [];
+        list.forEach(element => {
+          this.normalMarkedNotes.push(this.setNoteObject(element.data(), element.id))
         });
       });
   }

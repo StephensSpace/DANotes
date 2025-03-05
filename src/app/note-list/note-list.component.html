@@ -133,11 +133,11 @@
         </div>
     </div>
 
-    
+
     <div *ngIf="status == 'notes'">
         <app-note *ngFor="let note of getList()" [note]="note"></app-note>
     </div>
     <div *ngIf="status == 'trash'">
-        <app-note *ngFor="let trash of getListTrash()" [note]="trash"></app-note>
+        <app-note *ngFor="let trash of getList()" [note]="trash"></app-note>
     </div>
 </div>

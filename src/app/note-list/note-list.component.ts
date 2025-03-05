@@ -23,19 +23,27 @@ export class NoteListComponent {
   }
 
   getList() {
-    return this.noteService.normalNotes;
+    if (this.status == "notes") {
+      if (this.favFilter == 'all') {
+        return this.noteService.normalNotes;
+      } else {
+        return this.noteService.normalMarkedNotes;
+      }
+    } else {
+      return this.noteService.trashNotes;
+    }
   }
 
   getListTrash() {
-    return this.noteService.trashNotes;
+    return 
   }
 
-  changeFavFilter(filter:"all" | "fav"){
+  changeFavFilter(filter: "all" | "fav") {
     this.favFilter = filter;
   }
 
-  changeTrashStatus(){
-    if(this.status == "trash"){
+  changeTrashStatus() {
+    if (this.status == "trash") {
       this.status = "notes";
     } else {
       this.status = "trash";
